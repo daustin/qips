@@ -1,0 +1,26 @@
+==========================================================
+Queued Informatics Pipeline Suite (QIPS)
+
+Note that this repo is just informational and serves as a pointer to other QIPS parts.  
+
+The motivation behind QIPS was to allow users to create custom workflows that perform heavy computing tasks. These tasks consist of basic shell scripts, or simple ruby or perl scripts that are run and managed by the QIPS framework.  The user should not have to extend or modify the underlying framework in order to run even the most complex of workflows.  QIPS utilizes the AWS collection of services.  It stores information on S3, starts and stops worker “instances” in order to fill work requests via an AMQP queue, and catches and deals with outputs and errors from the workflows.  There are 5 parts to QIPS, and they are all still under heavy development:
+
+QIPS Workflow Manager 
+http://github.com/daustin/qips-wfmgr
+This is the main interface that allows users to define tasks, add them to workflows, and then submits the workflows.  Built around Ruote-kit for Rails.  
+
+QIPS Resource Manager 
+http://github.com/abrader/qips-rmgr-web
+This application manages the actual Amazon instances that do the work.  It applies policies that govern which instances are started, how many are started, and when to shut them down.  Workflow Manager informs Resource Manager when there is a workflow submitted.
+
+QIPS Node Amqp
+http://github.com/daustin/qips-node-amqp
+This was built with the daemon it gem and resides on the actual worker instance  (node).  It pulls jobs off the queue, downloads the pertinent data, processes it, and then either passes it to future tasks, or stores it in S3.  This sends frequent status updates to Resource Manager
+
+QIPS Extras
+http://github.com/daustin/qips-extras
+This a collection of ruby scripts that behave well with the QIPS framework.  They are meant to be used as skeleton code for tasks
+
+ILIMS
+https://github.com/delagoya/ilims
+ILIMS will serve as simple interface for users to store and organize the data for their workflows.  It utilizes Amazon S3 for storage.  Workflow Manager will list files from ILIMS and pass them onto the workflows. Then the QIPS Node will pull the appropriate files and then uploads the outputs back into ILIMS.
